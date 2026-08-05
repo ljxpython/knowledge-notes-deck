@@ -5,4 +5,5 @@ assert.match(player, /requestId/);
 assert.match(player, /cleanup\(\)/);
 assert.match(player, /prefetch|fragment\(deck\.pages\[nearby\]\)/);
 assert.match(player, /toggleDraw/);
+assert.match(player, /hashchange/);
 console.log('Runtime contract checks passed.');
