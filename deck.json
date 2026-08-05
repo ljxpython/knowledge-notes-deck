@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "title": "Agent Engineering, Made Visible",
+  "subtitle": "Knowledge Notes technical briefing",
+  "theme": "signal",
+  "sections": [
+    { "id": "map", "title": "Map the knowledge" },
+    { "id": "runtime", "title": "Understand the runtime" },
+    { "id": "production", "title": "Cross the production boundary" },
+    { "id": "report", "title": "Turn it into practice" }
+  ],
+  "pages": [
+    { "id": "cover", "title": "Agent Engineering, Made Visible", "section": "map", "type": "cover", "path": "pages/01-cover.html" },
+    { "id": "map", "title": "Three collections, one progression", "section": "map", "type": "narrative", "path": "pages/02-narrative.html" },
+    { "id": "compare", "title": "Reading vs orchestrating", "section": "runtime", "type": "comparison", "path": "pages/03-comparison.html" },
+    { "id": "loop", "title": "From model call to reliable system", "section": "runtime", "type": "process", "path": "pages/04-process.html" },
+    { "id": "timeline", "title": "Three layers of agent engineering", "section": "runtime", "type": "timeline", "path": "pages/05-timeline.html" },
+    { "id": "boundary", "title": "Complexity moves to the boundary", "section": "runtime", "type": "chart", "path": "pages/06-chart.html" },
+    { "id": "architecture", "title": "The technical learning loop", "section": "production", "type": "architecture", "path": "pages/07-architecture.html" },
+    { "id": "matrix", "title": "Choose the right abstraction", "section": "production", "type": "decision-matrix", "path": "pages/08-matrix.html" },
+    { "id": "simulation", "title": "Watch an agent loop close", "section": "production", "type": "custom", "path": "pages/09-simulation.html", "module": "modules/decision-simulator.js" },
+    { "id": "memory", "title": "State is not memory", "section": "production", "type": "narrative", "path": "pages/10-memory.html" },
+    { "id": "middleware", "title": "Middleware owns the boundary", "section": "production", "type": "process", "path": "pages/11-middleware.html" },
+    { "id": "a2a", "title": "Remote agents need a contract", "section": "report", "type": "architecture", "path": "pages/12-a2a.html" },
+    { "id": "summary", "title": "A report you can act on", "section": "report", "type": "summary", "path": "pages/10-summary.html" }
+  ]
+}

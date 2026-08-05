@@ -1,0 +1,11 @@
+{
+  "name": "knowledge-deck-template",
+  "private": false,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate-deck.mjs",
+    "test": "node scripts/test-runtime.mjs",
+    "check": "npm run validate && npm run test"
+  }
+}
