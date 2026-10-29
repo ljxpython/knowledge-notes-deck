@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const deck = JSON.parse(await readFile(resolve(root, 'deck.json'), 'utf8'));
-const allowed = new Set(['cover', 'narrative', 'comparison', 'process', 'timeline', 'chart', 'architecture', 'decision-matrix', 'summary', 'custom']);
+const allowed = new Set(['cover', 'narrative', 'comparison', 'process', 'timeline', 'chart', 'architecture', 'decision-matrix', 'summary', 'custom', 'transition']);
 const ids = new Set(), sections = new Set(deck.sections.map((section) => section.id));
 if (deck.version !== 1 || !deck.title || !Array.isArray(deck.pages) || !deck.pages.length) throw new Error('deck.json requires version 1, a title, and pages.');
 for (const page of deck.pages) {

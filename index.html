@@ -1,26 +1,154 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Knowledge Notes technical briefing">
-  <title>Agent Engineering, Made Visible</title>
+  <meta name="description" content="Interactive knowledge deck template">
+  <title>Making Better Technical Decisions</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <!-- Google Fonts: Sora + Noto Sans SC + JetBrains Mono (G1 极客字体对) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css?v=g1">
 </head>
 <body>
-  <div class="progress-track" aria-hidden="true"><div id="progress-bar"></div></div>
-  <aside id="side-menu" aria-label="Deck contents"><header><span>Contents</span><button id="close-menu" class="icon-button" aria-label="Close contents">x</button></header><div id="menu-list"></div></aside>
-  <button id="menu-overlay" aria-label="Close contents"></button>
+  <!-- 顶部 3px 精细进度条 -->
+  <div id="progress-bar-wrap" aria-hidden="true">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- 顶部微型认知上下文 (Breadcrumb) -->
+  <header id="deck-topbar" aria-label="Deck section header">
+    <span id="topbar-deck-title">DECK</span>
+    <span class="topbar-sep">／</span>
+    <span id="topbar-section-title">OVERVIEW</span>
+  </header>
+
+  <!-- 侧边目录抽屉 -->
+  <div id="menu-overlay"></div>
+  <aside id="side-menu" aria-label="Deck contents">
+    <header>
+      <span>大纲目录</span>
+      <button id="close-menu" class="menu-close-btn" aria-label="关闭目录">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </header>
+    <div id="menu-list"></div>
+  </aside>
+
+  <!-- 主视口内容区 -->
   <main id="deck-viewport" aria-live="polite"></main>
-  <nav class="navigation" aria-label="Page navigation"><button id="previous-page" class="nav-button" aria-label="Previous page">←</button><span id="page-indicator"></span><button id="next-page" class="nav-button" aria-label="Next page">→</button></nav>
-  <div class="toolbelt" aria-label="Deck tools"><button id="toggle-menu" class="icon-button" aria-label="Open contents">☰</button><button id="toggle-pen" class="icon-button" aria-label="Toggle pen trail">✦</button><button id="toggle-draw" class="icon-button" aria-label="Toggle drawing board">✎</button><label class="color-control" aria-label="Drawing color"><input id="draw-color" type="color" value="#f05d5e"></label><button id="toggle-fullscreen" class="icon-button" aria-label="Toggle fullscreen">⛶</button></div>
-  <canvas id="pen-canvas" aria-hidden="true"></canvas><canvas id="draw-canvas" aria-label="Drawing board"></canvas>
-  <p id="draw-hint" role="status">Draw mode: press D or Escape to clear and exit.</p>
-  <script type="module" src="js/player.js"></script>
+
+  <!-- 左右悬浮极简半透明翻页按钮 -->
+  <button id="nav-prev" data-tip="上一页 (快捷键 ←)" aria-label="上一页">&#8592;</button>
+  <button id="nav-next" data-tip="下一页 (快捷键 →)" aria-label="下一页">&#8594;</button>
+
+  <!-- 左侧一体化毛玻璃 Dock 工具栏 (All-in-One) -->
+  <div id="side-toolbar" aria-label="Deck tools">
+    <!-- M 目录 -->
+    <button id="btn-menu" data-tip="大纲目录 (快捷键 M)" aria-label="大纲目录">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+      <span class="btn-key">M</span>
+      <span class="btn-label">目录</span>
+    </button>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- 内置垂直页码指示器 -->
+    <div id="page-indicator" aria-label="页码">
+      <span id="page-current">01</span>
+      <span class="page-sep">/</span>
+      <span id="page-total">10</span>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- T 激光笔拖尾 -->
+    <button id="btn-pen" data-tip="激光笔拖尾 (快捷键 T)" aria-label="激光笔">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+        <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+        <path d="M2 2l7.586 7.586"></path>
+        <circle cx="11" cy="11" r="2"></circle>
+      </svg>
+      <span class="btn-key">T</span>
+      <span class="btn-label">激光</span>
+    </button>
+
+    <!-- P 留痕笔批注 -->
+    <button id="btn-retain" data-tip="留痕笔批注 (快捷键 P)" aria-label="留痕笔">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+      </svg>
+      <span class="btn-key">P</span>
+      <span class="btn-label">留痕</span>
+    </button>
+
+    <!-- D 涂鸦板书黑板 -->
+    <button id="btn-draw" data-tip="板书黑板 (快捷键 D)" aria-label="黑板">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+        <path d="M9 9l6 6M15 9l-6 6"></path>
+      </svg>
+      <span class="btn-key">D</span>
+      <span class="btn-label">黑板</span>
+    </button>
+
+    <!-- C 4 色弹出式调色盘 (快捷键 C) -->
+    <div id="color-picker-wrap">
+      <button id="btn-color" data-tip="画笔调色盘 (快捷键 C)" aria-label="调色盘">
+        <span id="color-dot-indicator"></span>
+      </button>
+      <div id="color-picker-popup">
+        <button class="color-dot" data-color="#f05d5e" style="background:#f05d5e" title="珊瑚红 (1)"></button>
+        <button class="color-dot" data-color="#3B82F6" style="background:#3B82F6" title="极客蓝 (2)"></button>
+        <button class="color-dot" data-color="#55a88c" style="background:#55a88c" title="薄荷绿 (3)"></button>
+        <button class="color-dot" data-color="#f59e0b" style="background:#f59e0b" title="琥珀金 (4)"></button>
+      </div>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- H 专注模式 -->
+    <button id="btn-focus" data-tip="专注演讲模式 (快捷键 H)" aria-label="专注模式">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
+      </svg>
+      <span class="btn-key">H</span>
+      <span class="btn-label">专注</span>
+    </button>
+
+    <!-- F 全屏演示 -->
+    <button id="btn-fullscreen" data-tip="全屏演示 (快捷键 F)" aria-label="全屏演示">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+      </svg>
+      <span class="btn-key">F</span>
+      <span class="btn-label">全屏</span>
+    </button>
+  </div>
+
+  <!-- 全屏板书黑板遮罩层 (Board Sheet) -->
+  <div id="board-sheet" aria-hidden="true">
+    <div class="board-sheet-hint">临时板书黑板 · 按 R 清空 · 按 Z 撤回 · 按 Esc 退出</div>
+  </div>
+
+  <!-- 双 Canvas 引擎 (激光笔拖尾 + 留痕画板) -->
+  <canvas id="pen-canvas" aria-hidden="true"></canvas>
+  <canvas id="draw-canvas" aria-label="Drawing board"></canvas>
+
+  <!-- 动态状态 Toast 提示条 (并设别名兼容旧选择器) -->
+  <div id="deck-toast" class="deck-toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/player.js?v=g1"></script>
 </body>
 </html>

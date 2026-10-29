@@ -1,9 +1,11 @@
 {
   "name": "knowledge-deck-template",
-  "private": false,
+  "private": true,
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "dev": "npx serve -l 8753 .",
+    "build:single": "node scripts/build-single.mjs",
     "validate": "node scripts/validate-deck.mjs",
     "test": "node scripts/test-runtime.mjs",
     "check": "npm run validate && npm run test"
